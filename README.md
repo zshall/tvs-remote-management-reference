@@ -1,5 +1,7 @@
 # TVS Remote Management Reference
 
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/011ad224-685a-4a3d-81cc-f977178bd926" />
+
 This is a deliberately small reference server for the Television Simulator remote management protocols. It can be used in production but it isn't really built for that; rather as a tool for you to study how the communication works so that you can build the same or similar functionality into your own server application.
 
 The control panel can send a demo weather overlay or an uploaded [Character Generator layout](https://docs.tvs.gcpw.art/engines/character-generator/) to a fixed `(channelNumber, slotNumber)` slot. Each channel has 3 numbered overlay slots available (slot `1` is the lowest, slot `3` is the highest) and there's a single slot available over the top of all channels: `channelNumber: "*"` with the slot setting omitted.
