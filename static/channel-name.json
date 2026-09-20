@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "variableDefinitions": {},
+  "layout": {
+    "showHeader": false,
+    "showFooter": false,
+    "body": {
+      "backgroundColor": "#0e13ab00",
+      "textColor": "#ffffff"
+    }
+  },
+  "header": {
+    "id": "jic26qy",
+    "memo": "header",
+    "style": {
+      "background-color": "#ba1806",
+      "color": "#ffffff"
+    },
+    "lines": [
+      {
+        "id": "nyw0anv",
+        "lineType": "text",
+        "chunks": [
+          {
+            "id": "bj37s1v",
+            "chunkType": "text",
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "id": "2fxz6p9",
+    "memo": "footer",
+    "style": {
+      "background-color": "#40a34d",
+      "color": "#ffffff"
+    },
+    "lines": [
+      {
+        "id": "68abnlx",
+        "lineType": "text",
+        "chunks": [
+          {
+            "id": "sht5rpm",
+            "chunkType": "text",
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "vgfslap",
+      "memo": "",
+      "lines": [
+        {
+          "id": "l5rhgos",
+          "lineType": "text",
+          "style": {
+            "text-shadow": "2px 2px 2px #000000",
+            "padding-bottom": "2rem",
+            "padding-left": "3rem",
+            "font-family": "\"Gothic A1\", sans-serif"
+          },
+          "chunks": [
+            {
+              "id": "f9s6h1z",
+              "chunkType": "text",
+              "text": "",
+              "variableKey": "channel-name",
+              "editorPlaceholderText": "channel name"
+            }
+          ]
+        }
+      ],
+      "style": {
+        "justify-content": "flex-end"
+      },
+      "animation": {
+        "transitionIn": {
+          "effect": "fade",
+          "durationMs": 2000
+        },
+        "transitionOut": {
+          "effect": "fade",
+          "durationMs": 2000
+        }
+      }
+    }
+  ]
+}

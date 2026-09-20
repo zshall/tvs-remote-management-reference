@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TVS Remote Management Demo</title>
+    <link rel="stylesheet" href="shell-css/shell.css" />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body class="theme-pastel desktop control-page">
+    <div class="window active app-window workspace">
+      <div class="title-bar">
+        <span class="control-box" aria-hidden="true"></span>
+        <span class="window-title">TVS Remote Management Demo</span>
+      </div>
+      <nav aria-label="Demo navigation">
+        <ul class="menu-bar">
+          <li class="menu-item active"><a href="index.html">Control Panel</a></li>
+          <li class="menu-item"><a href="embed.html">Embed Demo</a></li>
+          <li class="menu-item"><a href="https://docs.tvs.gcpw.art/developer/remote-management">Help</a></li>
+          <li class="menu-item" id="logoutMenuItem" hidden><a href="#" id="logoutLink">Log out</a></li>
+        </ul>
+      </nav>
+      <section class="window active panel-window login-window" id="loginWindow" aria-labelledby="loginTitle" hidden>
+        <div class="title-bar" id="loginTitle">Log in</div>
+        <div class="login-panel">
+          <img src="connect.png" />
+          <div>
+            <h1 class="page-heading stylized-initial-letter">Welcome</h1>
+            <form id="loginForm" class="login-form">
+              <label>API key <input id="loginKey" type="password" autocomplete="current-password" required /></label>
+              <button class="btn btn-preferred" type="submit">Log in</button>
+            </form>
+            <p id="loginStatus" class="hint" role="status"></p>
+          </div>
+        </div>
+      </section>
+      <div class="app-content" id="controlPanel" hidden>
+        <header>
+          <h1 class="page-heading">Remote Management Control Panel</h1>
+          <p class="lede">Send remote-management commands to every known TVS client or select individual client IDs below.</p>
+        </header>
+
+        <section class="window panel-window connections-panel" aria-labelledby="connections-title">
+          <div class="title-bar" id="connections-title">Connections and replay</div>
+          <div class="panel-content connections-content">
+            <div id="clients">Connected clients<span class="hint">Waiting for clients…</span></div>
+            <div class="toolbar-panel">
+              <label class="inline form-control"><input id="remember" type="checkbox" checked /> <span class="option-text">Remember declarative updates</span></label>
+              <label class="inline form-control"><input id="replayOnConnect" type="checkbox" /> <span class="option-text">Replay state on connect/reconnect</span></label>
+              <div class="buttons">
+                <button class="btn" onclick="replayNow()">Replay now</button>
+                <button class="btn" onclick="refreshClients()">Refresh clients</button>
+              </div>
+              <p id="clientStreamStatus" class="hint" role="status">Connecting to live client updates…</p>
+              <p class="hint">No selected client means “all clients.”</p>
+            </div>
+          </div>
+        </section>
+
+        <main class="control-grid">
+          <section class="window panel-window" aria-labelledby="remote-input-title">
+            <div class="title-bar" id="remote-input-title">Remote input</div>
+            <div class="panel-content remote-panel-content">
+              <div class="reference-remote" aria-label="TV remote control">
+                <div class="remote-top-controls">
+                  <div class="remote-control-button">Mute <button type="button" class="btn remote-button remote-button--dark" aria-label="Mute" onclick="sendRemote('muteOn')"></button></div>
+                  <div class="remote-control-button">Power on <button type="button" class="btn remote-button remote-button--power-on" aria-label="Power on" onclick="sendRemote('turnOn')"></button></div>
+                  <div class="remote-control-button">Unmute <button type="button" class="btn remote-button remote-button--light" aria-label="Unmute" onclick="sendRemote('muteOff')"></button></div>
+                  <div class="remote-control-button">Power off <button type="button" class="btn remote-button remote-button--power-off" aria-label="Power off" onclick="sendRemote('turnOff')"></button></div>
+                </div>
+
+                <div class="remote-keypad-slim" aria-label="Channel number keypad">
+                  <div class="remote-control-button">1 <button type="button" class="btn remote-button remote-button--light" aria-label="1" onclick="sendRemote('1')"></button></div>
+                  <div class="remote-control-button">2 <button type="button" class="btn remote-button remote-button--light" aria-label="2" onclick="sendRemote('2')"></button></div>
+                  <div class="remote-control-button">3 <button type="button" class="btn remote-button remote-button--light" aria-label="3" onclick="sendRemote('3')"></button></div>
+                  <div class="remote-control-button">4 <button type="button" class="btn remote-button remote-button--light" aria-label="4" onclick="sendRemote('4')"></button></div>
+                  <div class="remote-control-button">5 <button type="button" class="btn remote-button remote-button--light" aria-label="5" onclick="sendRemote('5')"></button></div>
+                  <div class="remote-control-button">6 <button type="button" class="btn remote-button remote-button--light" aria-label="6" onclick="sendRemote('6')"></button></div>
+                  <div class="remote-control-button">7 <button type="button" class="btn remote-button remote-button--light" aria-label="7" onclick="sendRemote('7')"></button></div>
+                  <div class="remote-control-button">8 <button type="button" class="btn remote-button remote-button--light" aria-label="8" onclick="sendRemote('8')"></button></div>
+                  <div class="remote-control-button">9 <button type="button" class="btn remote-button remote-button--light" aria-label="9" onclick="sendRemote('9')"></button></div>
+                  <div class="remote-control-button">. <button type="button" class="btn remote-button remote-button--light" aria-label="subchannel separator" onclick="sendRemote('subchannelSeparator')"></button></div>
+                  <div class="remote-control-button remote-zero">0 <button type="button" class="btn remote-button remote-button--light" aria-label="0" onclick="sendRemote('0')"></button></div>
+                </div>
+
+                <div class="remote-rockers">
+                  <div class="remote-rocker">
+                    <span>Volume</span>
+                    <button type="button" class="btn remote-button remote-button--light" aria-label="Volume up" data-repeat-remote-command="volumeUp">+</button>
+                    <button type="button" class="btn remote-button remote-button--light" aria-label="Volume down" data-repeat-remote-command="volumeDown">−</button>
+                  </div>
+                  <div class="remote-rocker">
+                    <span>Channel</span>
+                    <button type="button" class="btn remote-button remote-button--channel" aria-label="Channel up" data-repeat-remote-command="channelUp">+</button>
+                    <button type="button" class="btn remote-button remote-button--channel" aria-label="Channel down" data-repeat-remote-command="channelDown">−</button>
+                  </div>
+                </div>
+
+                <div class="remote-keypad-slim">
+                  <div class="remote-version-control">Version <button type="button" class="btn remote-button remote-button--dark" aria-label="Show version" onclick="sendRemote('version')"></button></div>
+                  <div class="remote-version-control">Info <button type="button" class="btn remote-button remote-button--light" aria-label="Show info" onclick="sendRemote('info')"></button></div>
+                </div>
+
+                <div class="remote-keypad-slim" aria-label="Picture Controls">
+                  <div class="remote-control-button"> Scanlines <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle scanlines" onclick="sendRemote('toggleScanlines')"></button></div>
+                  <div class="remote-control-button"> Noise <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle noise" onclick="sendRemote('toggleNoise')"></button></div>
+                  <div class="remote-control-button"> Blur <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle blur" onclick="sendRemote('toggleBlur')"></button></div>
+                  <div class="remote-control-button"> Shadow Mask <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle shadow mask" onclick="sendRemote('toggleShadowMask')"></button></div>
+                  <div class="remote-control-button"> Shadow Mask Type <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle shadow mask type" onclick="sendRemote('toggleShadowMaskType')"></button></div>
+                  <div class="remote-control-button"> Bezels <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle bezels" onclick="sendRemote('toggleBezels')"></button></div>
+                  <div class="remote-control-button"> Bezel Type <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle bezel type" onclick="sendRemote('toggleBezelType')"></button></div>
+                  <div class="remote-control-button"> Auto Scale <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle auto scale" onclick="sendRemote('toggleAutoScale')"></button></div>
+                  <div class="remote-control-button"> Reset Picture <button type="button" class="btn remote-button remote-button--dark" aria-label="Reset picture" onclick="sendRemote('resetPicture')"></button></div>
+                </div>
+
+                <div class="remote-scale-controls" aria-label="Picture scale controls">
+                  <span class="remote-scale-label">Scale X</span>
+                  <span class="remote-scale-label">Scale Y</span>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--left" aria-label="Scale down horizontally" data-repeat-remote-command="scaleDownX"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--right" aria-label="Scale up horizontally" data-repeat-remote-command="scaleUpX"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--up" aria-label="Scale up vertically" data-repeat-remote-command="scaleUpY"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--down" aria-label="Scale down vertically" data-repeat-remote-command="scaleDownY"></button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="control-details">
+          <section class="window panel-window" aria-labelledby="receiver-title">
+            <div class="title-bar" id="receiver-title">Channel and receiver</div>
+            <div class="panel-content">
+              <label>Channel number <input id="channelNumber" value="1" /></label>
+              <label class="inline form-control"><input id="hideOsd" type="checkbox" /> <span class="option-text">Hide tuner OSD</span></label>
+              <button class="btn btn-preferred" onclick="setChannel()">Set channel</button>
+              <label>Volume (0–50) <input id="volume" type="number" min="0" max="50" value="40" /></label>
+              <label class="inline form-control"><input id="isMuting" type="checkbox" /> <span class="option-text">Muted</span></label>
+              <button class="btn btn-preferred" onclick="setReceiverSettings()">Set receiver settings</button>
+            </div>
+          </section>
+
+          <section class="window panel-window" aria-labelledby="picture-title">
+            <div class="title-bar" id="picture-title">Picture settings</div>
+            <div class="panel-content">
+              <label>
+                <span class="slider-heading"><span>Noise</span><output id="noiseValue" for="noise">0.25</output></span>
+                <input class="slider-input" id="noise" type="range" min="0" max="1" step="0.01" value="0.25" />
+              </label>
+              <label>
+                <span class="slider-heading"><span>Blur in pixels</span><output id="blurValue" for="blur">1.0</output></span>
+                <input class="slider-input" id="blur" type="range" min="0" max="5" step="0.1" value="1" />
+              </label>
+              <p class="hint">Noise and blur are updated live (max once every 10 ms).</p>
+              <label class="inline form-control"><input id="scanlines" type="checkbox" checked /> <span class="option-text">Scanlines</span></label>
+              <label class="inline form-control"><input id="changeChannelNoise" type="checkbox" checked /> <span class="option-text">Channel-change noise</span></label>
+              <button class="btn btn-preferred" onclick="setPicture()">Set picture overrides</button>
+              <button class="btn" onclick="clearPicture()">Clear these overrides</button>
+            </div>
+          </section>
+
+          <section class="window panel-window" aria-labelledby="overlay-title">
+            <div class="title-bar" id="overlay-title">Overlay</div>
+            <div class="panel-content">
+              <fieldset class="overlay-layout-options">
+                <legend>Target</legend>
+                <label class="inline form-control"><input type="radio" name="overlayTarget" value="all" checked /> <span class="option-text">All Channels</span></label>
+                <label class="inline form-control"><input type="radio" name="overlayTarget" value="individual" /> <span class="option-text">Individual Channel</span></label>
+              </fieldset>
+              <div id="individualOverlayFields" class="overlay-layout-fields">
+                <label>Channel number <input id="overlayChannel" value="1" /></label>
+                <label>Slot (lowest 1 to highest 3) <span class="select-input"><select id="overlaySlot"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></span></label>
+              </div>
+              <p class="hint">Each numbered channel has three fixed slots. The single * slot appears above them all. Sending a complete overlay replaces its slot.</p>
+              <label>Blend mode
+                <span class="select-input"><select id="overlayBlendMode">
+                  <option value="normal">Normal</option><option value="multiply">Multiply</option><option value="screen">Screen</option>
+                  <option value="overlay">Overlay</option><option value="darken">Darken</option><option value="lighten">Lighten</option>
+                  <option value="color-dodge">Color dodge</option><option value="color-burn">Color burn</option>
+                  <option value="hard-light">Hard light</option><option value="soft-light">Soft light</option>
+                  <option value="difference">Difference</option><option value="exclusion">Exclusion</option>
+                  <option value="hue">Hue</option><option value="saturation">Saturation</option>
+                  <option value="color">Color</option><option value="luminosity">Luminosity</option>
+                  <option value="plus-lighter">Plus lighter</option>
+                </select></span>
+              </label>
+              <fieldset class="overlay-layout-options">
+                <legend>Layout</legend>
+                <label class="inline form-control"><input type="radio" name="overlayLayoutSource" value="weather" checked /> <span class="option-text">Weather demo</span></label>
+                <label class="inline form-control"><input type="radio" name="overlayLayoutSource" value="custom" /> <span class="option-text">Custom layout</span></label>
+              </fieldset>
+              <div id="weatherOverlayFields" class="overlay-layout-fields">
+                <label>Alert text <textarea id="overlayAlert">The National Weather Service has issued A SEVERE THUNDERSTORM WARNING for Greenhill County.</textarea></label>
+              </div>
+              <div id="customOverlayFields" class="overlay-layout-fields" hidden>
+                <label>Layout JSON file <input id="customOverlayLayoutFile" type="file" accept=".json,application/json" /></label>
+                <p id="customOverlayLayoutStatus" class="hint" role="status" aria-live="polite">Choose a character-generator layout exported as JSON.</p>
+                <div id="customOverlayVariableFields" class="custom-overlay-variable-fields"></div>
+                <p id="customOverlaySystemVariables" class="hint" hidden></p>
+              </div>
+              <label>Expires in minutes <input id="overlayMinutes" type="number" min="1" value="10" /></label>
+              <label>Optional audio URL <input id="overlayAudio" placeholder="https://example.test/alert.mp3" /></label>
+              <label>Other-audio behavior
+                <span class="select-input"><select id="overlayBehavior"><option value="mute">Mute</option><option value="duck">Duck</option></select></span>
+              </label>
+              <button id="sendOverlayButton" class="btn btn-preferred" onclick="sendOverlay()">Send full overlay</button>
+              <button id="updateOverlayButton" class="btn" onclick="updateOverlay()">Replace overlay data</button>
+              <button id="clearSelectedSlotButton" class="btn danger-action overlay-slot-action" onclick="clearOverlay('slot')">Clear selected slot</button>
+              <button id="clearSelectedChannelButton" class="btn danger-action" onclick="clearOverlay('channel')">Clear selected channel</button>
+              <button class="btn danger-action" onclick="clearOverlay('all')">Clear every slot</button>
+              <button class="btn" onclick="refreshOverlaySlots()">Refresh remembered slots</button>
+              <pre id="overlaySlotStatus" aria-live="polite">No remembered overlay state loaded.</pre>
+            </div>
+          </section>
+
+          <section class="window panel-window" aria-labelledby="request-title">
+            <div class="title-bar" id="request-title">Last SSE event</div>
+            <div class="panel-content">
+              <pre id="result" aria-live="polite">No events sent yet.</pre>
+            </div>
+          </section>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div style="height: 1rem;"></div>
+
+    <script>
+      const byId = (id) => document.getElementById(id);
+      const controlKeyStorageName = 'tvsRemoteManagementControlApiKey';
+      let controlApiKey = localStorage.getItem(controlKeyStorageName) || '';
+      let isAuthenticated = false;
+
+      function showLogin(message = '') {
+        isAuthenticated = false;
+        clientEventSource?.close();
+        byId('controlPanel').hidden = true;
+        byId('logoutMenuItem').hidden = true;
+        byId('loginWindow').hidden = false;
+        byId('loginStatus').textContent = message;
+        byId('loginStatus').dataset.state = message ? 'error' : '';
+        byId('loginKey').value = '';
+        byId('loginKey').focus();
+      }
+
+      function showControlPanel(keyRequired) {
+        isAuthenticated = true;
+        byId('loginWindow').hidden = true;
+        byId('controlPanel').hidden = false;
+        byId('logoutMenuItem').hidden = !keyRequired;
+
+        apiFetch('/api/settings')
+          .then((response) => response.json())
+          .then((settings) => {
+            byId('replayOnConnect').checked = settings.replayOnConnect;
+          });
+
+        connectClientEvents();
+        void refreshOverlaySlots();
+      }
+
+      async function checkControlKey(key) {
+        const headers = new Headers();
+        if (key) {
+          headers.set('x-api-key', key);
+        }
+
+        const response = await fetch('/api/auth-check', { headers, cache: 'no-store' });
+        if (response.status === 401) {
+          return { valid: false };
+        }
+        if (!response.ok) {
+          throw new Error(`Authentication check failed (HTTP ${response.status}).`);
+        }
+        return { valid: true, ...(await response.json()) };
+      }
+
+      async function startControlPanel() {
+        try {
+          const result = await checkControlKey(controlApiKey);
+          if (!result.valid) {
+            localStorage.removeItem(controlKeyStorageName);
+            controlApiKey = '';
+            showLogin();
+            return;
+          }
+          if (controlApiKey) {
+            localStorage.setItem(controlKeyStorageName, controlApiKey);
+          }
+          showControlPanel(result.controlKeyRequired);
+        } catch (error) {
+          showLogin(`Could not reach the server: ${error.message}`);
+        }
+      }
+
+      async function apiFetch(path, options = {}) {
+        if (!isAuthenticated) {
+          throw new Error('Log in before using the control API.');
+        }
+
+        const headers = new Headers(options.headers || {});
+        if (controlApiKey) {
+          headers.set('x-api-key', controlApiKey);
+        }
+
+        const response = await fetch(path, { ...options, headers });
+        if (response.status === 401) {
+          localStorage.removeItem(controlKeyStorageName);
+          controlApiKey = '';
+          showLogin('The control API key is no longer valid. Please log in again.');
+          throw new Error('Control API authentication failed.');
+        }
+        return response;
+      }
+
+      function selectedClientIds() {
+        const ids = [...document.querySelectorAll('[data-client-id]:checked')].map((input) => input.dataset.clientId);
+        return ids.length ? ids : undefined;
+      }
+
+      async function request(path, body) {
+        const response = await apiFetch(path, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const result = await response.json();
+        return result;
+      }
+
+      async function sendEvent(eventName, payload, remember = byId('remember').checked) {
+        const result = await request(`/api/events/${eventName}`, {
+          clientIds: selectedClientIds(),
+          payload,
+          remember
+        });
+
+        if (result.status === 'ok') {
+          const dataLines = JSON.stringify(payload, null, 2)
+            .split('\n')
+            .map((line) => `data: ${line}`)
+            .join('\n');
+          byId('result').textContent = `event: ${eventName}\n${dataLines}`;
+        } else {
+          byId('result').textContent = `Failed to send ${eventName}: ${result.error || 'Unknown error'}`;
+        }
+
+        if (eventName.startsWith('overlay')) {
+          await refreshOverlaySlots();
+        }
+
+        return result;
+      }
+
+      function createThrottledEventSender(eventName, minimumIntervalMs) {
+        let pendingPayload = {};
+        let timer;
+        let inFlight = false;
+        let lastSentAt = -Infinity;
+
+        function schedule() {
+          if (inFlight || timer !== undefined || !Object.keys(pendingPayload).length) {
+            return;
+          }
+          const elapsed = performance.now() - lastSentAt;
+          timer = setTimeout(flush, Math.max(0, minimumIntervalMs - elapsed));
+        }
+
+        async function flush() {
+          timer = undefined;
+          if (inFlight || !Object.keys(pendingPayload).length) {
+            schedule();
+            return;
+          }
+
+          const payload = pendingPayload;
+          pendingPayload = {};
+          lastSentAt = performance.now();
+          inFlight = true;
+
+          try {
+            await sendEvent(eventName, payload);
+          } catch (error) {
+            byId('result').textContent = `Failed to stream ${eventName}: ${error}`;
+          } finally {
+            inFlight = false;
+            schedule();
+          }
+        }
+
+        return (payload) => {
+          Object.assign(pendingPayload, payload);
+          schedule();
+        };
+      }
+
+      const streamPictureSettings = createThrottledEventSender('picture-settings', 10);
+
+      function connectPictureSlider(inputId, outputId, property, fractionDigits) {
+        const input = byId(inputId);
+        const output = byId(outputId);
+
+        const update = () => {
+          const value = Number(input.value);
+          output.value = value.toFixed(fractionDigits);
+          streamPictureSettings({ [property]: value });
+        };
+
+        output.value = Number(input.value).toFixed(fractionDigits);
+        input.addEventListener('input', update);
+      }
+
+      function sendRemote(command) {
+        return sendEvent('remote', { command }, false);
+      }
+
+      function connectRepeatingRemoteButtons() {
+        const repeatTimers = new Map();
+
+        function stopRepeating(button) {
+          const timer = repeatTimers.get(button);
+          if (timer === undefined) {
+            return;
+          }
+          clearInterval(timer);
+          repeatTimers.delete(button);
+        }
+
+        document.querySelectorAll('[data-repeat-remote-command]').forEach((button) => {
+          const sendCommand = () => sendRemote(button.dataset.repeatRemoteCommand);
+
+          button.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0 || repeatTimers.has(button)) {
+              return;
+            }
+            event.preventDefault();
+            if (typeof button.setPointerCapture === 'function') {
+              button.setPointerCapture(event.pointerId);
+            }
+            sendCommand();
+            repeatTimers.set(button, setInterval(sendCommand, 500));
+          });
+
+          button.addEventListener('pointerup', () => stopRepeating(button));
+          button.addEventListener('pointercancel', () => stopRepeating(button));
+          button.addEventListener('lostpointercapture', () => stopRepeating(button));
+
+          button.addEventListener('click', (event) => {
+            if (event.detail === 0) {
+              sendCommand();
+            }
+          });
+        });
+
+        window.addEventListener('blur', () => {
+          [...repeatTimers.keys()].forEach(stopRepeating);
+        });
+      }
+
+      function setChannel() {
+        return sendEvent('channel-change', {
+          channelNumber: byId('channelNumber').value,
+          hideOsd: byId('hideOsd').checked
+        });
+      }
+
+      function setReceiverSettings() {
+        return sendEvent('receiver-settings', {
+          volume: Number(byId('volume').value),
+          isMuting: byId('isMuting').checked
+        });
+      }
+
+      function setPicture() {
+        return sendEvent('picture-settings', {
+          noise: Number(byId('noise').value),
+          blur: Number(byId('blur').value),
+          scanlines: byId('scanlines').checked,
+          changeChannelNoise: byId('changeChannelNoise').checked
+        });
+      }
+
+      function clearPicture() {
+        return sendEvent('picture-settings', {
+          noise: null,
+          blur: null,
+          scanlines: null,
+          changeChannelNoise: null
+        });
+      }
+
+      function overlayExpiration() {
+        return new Date(Date.now() + Number(byId('overlayMinutes').value) * 60_000).toISOString();
+      }
+
+      const MAX_CUSTOM_LAYOUT_BYTES = 10 * 1024 * 1024;
+      const CUSTOM_VARIABLE_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9-]*$/;
+      let customOverlayLayout;
+      let weatherOverlayLayoutPromise;
+
+      function selectedOverlayLayoutSource() {
+        return document.querySelector('[name="overlayLayoutSource"]:checked').value;
+      }
+
+      function isPlainObject(value) {
+        return typeof value === 'object' && value !== null && !Array.isArray(value);
+      }
+
+      function assertDisplayableLayoutPage(page, label) {
+        if (!isPlainObject(page) || typeof page.id !== 'string' || typeof page.memo !== 'string' || !Array.isArray(page.lines)) {
+          throw new Error(`${label} is missing its displayable structure.`);
+        }
+
+        page.lines.forEach((line, lineIndex) => {
+          if (!isPlainObject(line) || typeof line.id !== 'string' || !Array.isArray(line.chunks)) {
+            throw new Error(`${label} line ${lineIndex + 1} is missing its displayable content.`);
+          }
+
+          line.chunks.forEach((chunk) => {
+            if (!isPlainObject(chunk) || typeof chunk.id !== 'string' || typeof chunk.text !== 'string') {
+              throw new Error(`${label} line ${lineIndex + 1} contains an invalid chunk.`);
+            }
+          });
+        });
+      }
+
+      function assertDisplayableLayout(layout) {
+        if (!isPlainObject(layout)) {
+          throw new Error('Layout JSON must be an object.');
+        }
+        if (typeof layout.version !== 'number') {
+          throw new Error('Layout JSON is missing its version number.');
+        }
+        if (!isPlainObject(layout.layout)) {
+          throw new Error('Layout JSON is missing its layout settings.');
+        }
+
+        const body = layout.layout.body;
+        if (
+          typeof layout.layout.showHeader !== 'boolean'
+          || typeof layout.layout.showFooter !== 'boolean'
+          || !isPlainObject(body)
+          || typeof body.backgroundColor !== 'string'
+          || typeof body.textColor !== 'string'
+        ) {
+          throw new Error('Layout settings are malformed or cannot be displayed.');
+        }
+
+        assertDisplayableLayoutPage(layout.header, 'Layout header');
+        assertDisplayableLayoutPage(layout.footer, 'Layout footer');
+        if (!Array.isArray(layout.pages)) {
+          throw new Error('Layout JSON is missing its pages array.');
+        }
+        layout.pages.forEach((page, pageIndex) => assertDisplayableLayoutPage(page, `Layout page ${pageIndex + 1}`));
+      }
+
+      function collectCustomOverlayVariables(layout) {
+        const variables = new Map();
+
+        function addVariable(rawKey, source = {}) {
+          const key = typeof rawKey === 'string' ? rawKey.trim() : '';
+          if (!key || (!CUSTOM_VARIABLE_KEY_PATTERN.test(key) && !key.startsWith('system.'))) {
+            return;
+          }
+
+          const current = variables.get(key) || { key, isImage: false, placeholder: '' };
+          current.isImage ||= source.chunkType === 'image';
+          current.placeholder ||= typeof source.editorPlaceholderText === 'string' ? source.editorPlaceholderText : '';
+          variables.set(key, current);
+        }
+
+        function visit(value) {
+          if (Array.isArray(value)) {
+            value.forEach(visit);
+            return;
+          }
+          if (!isPlainObject(value)) {
+            return;
+          }
+          if (Object.prototype.hasOwnProperty.call(value, 'variableKey')) {
+            addVariable(value.variableKey, value);
+          }
+          Object.values(value).forEach(visit);
+        }
+
+        visit(layout.header);
+        visit(layout.footer);
+        visit(layout.pages);
+
+        const definitions = isPlainObject(layout.variableDefinitions) ? layout.variableDefinitions : {};
+        for (const [key, definition] of Object.entries(definitions)) {
+          addVariable(key);
+          const variable = variables.get(key);
+          if (variable && isPlainObject(definition)) {
+            variable.definition = definition;
+          }
+        }
+
+        return [...variables.values()];
+      }
+
+      function createCustomVariableControl(variable) {
+        const definition = variable.definition || {};
+        const type = definition.type === 'date' || definition.type === 'boolean' ? definition.type : 'string';
+        const label = document.createElement('label');
+        const heading = document.createElement('span');
+        const detail = type === 'string' ? (variable.isImage ? 'image URL' : 'text') : type;
+        heading.textContent = `${variable.key} (${detail})`;
+        label.append(heading);
+
+        let control;
+        if (type === 'boolean') {
+          control = document.createElement('select');
+          const falseValues = isPlainObject(definition.boolean) && Array.isArray(definition.boolean.falseValues)
+            ? definition.boolean.falseValues
+            : [];
+          const falseValue = falseValues.find((value) => typeof value === 'string' && value.trim()) || 'false';
+          control.append(new Option('(unset)', ''), new Option('True', 'true'), new Option('False', falseValue));
+        } else {
+          control = document.createElement('input');
+          const inputMode = isPlainObject(definition.date) ? definition.date.inputMode : undefined;
+          const usesFormattedText = type === 'date' && inputMode === 'custom';
+          control.type = type === 'date' && !usesFormattedText ? 'datetime-local' : 'text';
+          if (control.type === 'datetime-local') {
+            control.step = '1';
+          }
+          if (usesFormattedText && typeof definition.date.inputFormat === 'string') {
+            control.placeholder = `Expected format: ${definition.date.inputFormat}`;
+          } else if (variable.placeholder) {
+            control.placeholder = variable.placeholder;
+          }
+          if (type === 'date') {
+            control.dataset.dateInputMode = inputMode || 'iso-8601';
+          }
+        }
+
+        control.dataset.overlayVariableKey = variable.key;
+        label.append(control);
+        return label;
+      }
+
+      function renderCustomOverlayVariables(layout) {
+        const variables = collectCustomOverlayVariables(layout);
+        const editableVariables = variables.filter((variable) => !variable.key.startsWith('system.'));
+        const systemVariables = variables.filter((variable) => variable.key.startsWith('system.'));
+        const container = byId('customOverlayVariableFields');
+        container.replaceChildren();
+
+        if (editableVariables.length) {
+          editableVariables.forEach((variable) => container.append(createCustomVariableControl(variable)));
+        } else {
+          const empty = document.createElement('p');
+          empty.className = 'hint';
+          empty.textContent = 'This layout does not declare any editable variables.';
+          container.append(empty);
+        }
+
+        const systemMessage = byId('customOverlaySystemVariables');
+        systemMessage.hidden = systemVariables.length === 0;
+        systemMessage.textContent = systemVariables.length
+          ? `TVS supplies these system variables automatically: ${systemVariables.map((variable) => variable.key).join(', ')}`
+          : '';
+        return { editableCount: editableVariables.length, systemCount: systemVariables.length };
+      }
+
+      function setCustomOverlayLayoutStatus(message, state = '') {
+        const status = byId('customOverlayLayoutStatus');
+        status.textContent = message;
+        status.dataset.state = state;
+      }
+
+      function updateOverlayLayoutControls() {
+        const customSelected = selectedOverlayLayoutSource() === 'custom';
+        byId('weatherOverlayFields').hidden = customSelected;
+        byId('customOverlayFields').hidden = !customSelected;
+        byId('sendOverlayButton').disabled = customSelected && !customOverlayLayout;
+        byId('updateOverlayButton').disabled = customSelected && !customOverlayLayout;
+      }
+
+      async function loadCustomOverlayLayout(event) {
+        const file = event.target.files[0];
+        customOverlayLayout = undefined;
+        byId('customOverlayVariableFields').replaceChildren();
+        byId('customOverlaySystemVariables').hidden = true;
+        updateOverlayLayoutControls();
+
+        if (!file) {
+          setCustomOverlayLayoutStatus('Choose a character-generator layout exported as JSON.');
+          return;
+        }
+        if (file.size > MAX_CUSTOM_LAYOUT_BYTES) {
+          setCustomOverlayLayoutStatus('That layout is larger than the 10 MB demo limit.', 'error');
+          return;
+        }
+
+        try {
+          const layout = JSON.parse(await file.text());
+          assertDisplayableLayout(layout);
+          customOverlayLayout = layout;
+          const { editableCount, systemCount } = renderCustomOverlayVariables(layout);
+          const detectedCount = editableCount + systemCount;
+          setCustomOverlayLayoutStatus(
+            `${file.name} loaded. Detected ${detectedCount} variable${detectedCount === 1 ? '' : 's'} (${editableCount} editable).`,
+            'success'
+          );
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          setCustomOverlayLayoutStatus(`Could not load ${file.name}: ${message}`, 'error');
+        }
+
+        updateOverlayLayoutControls();
+      }
+
+      function customOverlayVariableValue(control) {
+        const value = control.value;
+        const inputMode = control.dataset.dateInputMode;
+        if (!value || !inputMode || inputMode === 'custom') {
+          return value;
+        }
+
+        const milliseconds = new Date(value).getTime();
+        if (!Number.isFinite(milliseconds)) {
+          return value;
+        }
+        if (inputMode === 'unix-ms') {
+          return String(milliseconds);
+        }
+        if (inputMode === 'unix-seconds') {
+          return String(Math.floor(milliseconds / 1000));
+        }
+        return new Date(milliseconds).toISOString();
+      }
+
+      function overlayData() {
+        if (selectedOverlayLayoutSource() === 'custom') {
+          const variables = {};
+
+          document.querySelectorAll('[data-overlay-variable-key]').forEach((control) => {
+            const value = customOverlayVariableValue(control);
+            if (value !== '') {
+              variables[control.dataset.overlayVariableKey] = value;
+            }
+          });
+
+          return { variables };
+        }
+
+        return {
+          variables: {
+            alert: byId('overlayAlert').value,
+            area: `${location.origin}/area.png`
+          }
+        };
+      }
+
+      async function selectedOverlayLayout() {
+        if (selectedOverlayLayoutSource() === 'custom') {
+          if (!customOverlayLayout) {
+            throw new Error('Choose a valid custom layout JSON file first.');
+          }
+          return customOverlayLayout;
+        }
+
+        weatherOverlayLayoutPromise ||= fetch('weather.json').then((response) => {
+          if (!response.ok) {
+            throw new Error(`Could not load the weather layout (${response.status}).`);
+          }
+          return response.json();
+        });
+        return weatherOverlayLayoutPromise;
+      }
+
+      async function sendOverlay() {
+        try {
+          const layout = await selectedOverlayLayout();
+          const audioUrl = byId('overlayAudio').value.trim();
+          const payload = {
+            ...overlayAddress(),
+            layout,
+            data: overlayData(),
+            expiresAt: overlayExpiration(),
+            mixBlendMode: byId('overlayBlendMode').value
+          };
+          if (audioUrl) {
+            payload.audio = { src: audioUrl, behavior: byId('overlayBehavior').value };
+          }
+          return sendEvent('overlay', payload);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          byId('result').textContent = `Failed to send overlay: ${message}`;
+        }
+      }
+
+      function updateOverlay() {
+        if (selectedOverlayLayoutSource() === 'custom' && !customOverlayLayout) {
+          byId('result').textContent = 'Failed to update overlay: Choose a valid custom layout JSON file first.';
+          return;
+        }
+        return sendEvent('overlay-data-update', {
+          ...overlayAddress(),
+          data: overlayData(),
+          expiresAt: overlayExpiration()
+        });
+      }
+
+      function overlayAddress() {
+        if (selectedOverlayTarget() === 'all') {
+          return { channelNumber: '*' };
+        }
+
+        const channelNumber = byId('overlayChannel').value.trim();
+        return { channelNumber, slotNumber: Number(byId('overlaySlot').value) };
+      }
+
+      function selectedOverlayTarget() {
+        return document.querySelector('[name="overlayTarget"]:checked').value;
+      }
+
+      function updateOverlayTargetControls() {
+        const allChannels = selectedOverlayTarget() === 'all';
+        byId('individualOverlayFields').hidden = allChannels;
+        byId('clearSelectedSlotButton').hidden = allChannels;
+        byId('clearSelectedChannelButton').textContent = allChannels
+          ? 'Clear all-channels slot'
+          : 'Clear selected channel';
+      }
+
+      function clearOverlay(scope) {
+        const address = overlayAddress();
+        const payload = scope === 'all'
+          ? {}
+          : scope === 'channel'
+            ? { channelNumber: address.channelNumber }
+            : address;
+        return sendEvent('overlay-clear', payload);
+      }
+
+      async function refreshOverlaySlots() {
+        const query = new URLSearchParams();
+        for (const clientId of selectedClientIds() || []) {
+          query.append('clientId', clientId);
+        }
+
+        const response = await apiFetch(`/api/overlay-state?${query}`);
+        const state = await response.json();
+        if (!response.ok) {
+          byId('overlaySlotStatus').textContent = state.error || 'Could not read remembered overlays.';
+          return;
+        }
+
+        const lines = state.clients.flatMap(({ clientId, overlays }) => {
+          return [
+            `${clientId}: ${overlays.length} active slot(s)`,
+            ...overlays.map((overlay) => `  ${overlay.channelNumber}${overlay.slotNumber ? ` / slot ${overlay.slotNumber}` : ''} · ${overlay.mixBlendMode || 'normal'}`)
+          ];
+        });
+
+        byId('overlaySlotStatus').textContent = lines.join('\n') || 'No known clients to inspect.';
+      }
+
+      function replayNow() {
+        return request('/api/replay', { clientIds: selectedClientIds() });
+      }
+
+      async function refreshClients() {
+        try {
+          const response = await apiFetch('/api/clients');
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const { clients } = await response.json();
+          renderClients(clients);
+        } catch (error) {
+          byId('clientStreamStatus').textContent = `Could not refresh clients: ${error.message}`;
+        }
+      }
+
+      function renderClients(clients) {
+        const selected = new Set(selectedClientIds() || []);
+        const container = byId('clients');
+        container.replaceChildren();
+
+        const heading = document.createElement('span');
+        heading.textContent = 'Connected clients';
+        container.append(heading);
+
+        if (!clients.length) {
+          const empty = document.createElement('span');
+          empty.className = 'hint';
+          empty.textContent = 'No TVS clients connected.';
+          container.append(empty);
+        }
+
+        for (const client of clients) {
+          const label = document.createElement('label');
+          label.className = 'inline form-control';
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.dataset.clientId = client.clientId;
+          checkbox.checked = selected.has(client.clientId);
+
+          const transports = (client.transports || []).join(' + ') || 'unknown';
+          const connectionDetails = client.connections
+            ? `${client.connections} connection${client.connections === 1 ? '' : 's'}`
+            : 'polling';
+
+          const description = document.createElement('span');
+          description.className = 'option-text';
+          description.textContent = `${client.clientId} (${transports}; ${connectionDetails})`;
+
+          label.append(checkbox, description);
+          container.append(label);
+        }
+      }
+
+      let clientEventSource;
+
+      function connectClientEvents() {
+        clientEventSource?.close();
+        const url = new URL('/api/client-events', location.href);
+        if (controlApiKey) {
+          url.searchParams.set('key', controlApiKey);
+        }
+
+        clientEventSource = new EventSource(url);
+        let receivedList = false;
+        let triedFallback = false;
+
+        byId('clientStreamStatus').textContent = 'Connecting to live client updates…';
+
+        clientEventSource.addEventListener('clients', (event) => {
+          try {
+            const { clients } = JSON.parse(event.data);
+            if (!Array.isArray(clients)) {
+              throw new Error('Invalid client list.');
+            }
+            receivedList = true;
+            renderClients(clients);
+          } catch (error) {
+            byId('clientStreamStatus').textContent = `Could not read live clients: ${error.message}`;
+          }
+        });
+
+        clientEventSource.onopen = () => {
+          byId('clientStreamStatus').textContent = 'Live client updates connected.';
+        };
+
+        clientEventSource.onerror = () => {
+          byId('clientStreamStatus').textContent = 'Live updates disconnected; reconnecting…';
+          if (!receivedList && !triedFallback) {
+            triedFallback = true;
+            void refreshClients();
+          }
+        };
+      }
+
+      byId('replayOnConnect').addEventListener('change', (event) => {
+        request('/api/settings', { replayOnConnect: event.target.checked });
+      });
+
+      byId('loginForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const key = byId('loginKey').value;
+        byId('loginStatus').textContent = 'Checking key…';
+        byId('loginStatus').dataset.state = '';
+
+        try {
+          const result = await checkControlKey(key);
+          if (!result.valid) {
+            showLogin('Key is incorrect.');
+            return;
+          }
+          controlApiKey = key;
+          localStorage.setItem(controlKeyStorageName, key);
+          showControlPanel(result.controlKeyRequired);
+        } catch (error) {
+          byId('loginStatus').textContent = `Could not reach the server: ${error.message}`;
+          byId('loginStatus').dataset.state = 'error';
+        }
+      });
+
+      byId('logoutLink').addEventListener('click', (event) => {
+        event.preventDefault();
+        localStorage.removeItem(controlKeyStorageName);
+        controlApiKey = '';
+        showLogin();
+      });
+
+      byId('clients').addEventListener('change', refreshOverlaySlots);
+
+      document.querySelectorAll('[name="overlayLayoutSource"]').forEach((input) => {
+        input.addEventListener('change', updateOverlayLayoutControls);
+      });
+
+      document.querySelectorAll('[name="overlayTarget"]').forEach((input) => {
+        input.addEventListener('change', updateOverlayTargetControls);
+      });
+
+      byId('customOverlayLayoutFile').addEventListener('change', loadCustomOverlayLayout);
+      connectPictureSlider('noise', 'noiseValue', 'noise', 2);
+      connectPictureSlider('blur', 'blurValue', 'blur', 1);
+      connectRepeatingRemoteButtons();
+      updateOverlayLayoutControls();
+      updateOverlayTargetControls();
+      void startControlPanel();
+    </script>
+  </body>
+</html>

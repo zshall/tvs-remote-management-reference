@@ -1,0 +1,21 @@
+applicationTitle: TVS JSON Remote Management Demo
+warmup: false
+scanlines: false
+shadowMask: false
+noise: 0.25
+blur: 1
+bezel: none
+
+remoteManagement:
+  type: json
+  url: http://localhost:3991/state.json
+  pollIntervalMs: 1000
+  clientId: reference-json-demo
+
+channels:
+  - number: 1
+    name: DEMO CHANNEL 1
+    abbr: ONE
+  - number: 2
+    name: DEMO CHANNEL 2
+    abbr: TWO

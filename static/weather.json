@@ -1,0 +1,124 @@
+{
+  "version": 2,
+  "variableDefinitions": {},
+  "layout": {
+    "showHeader": false,
+    "showFooter": false,
+    "body": {
+      "backgroundColor": "#0e13ab00",
+      "textColor": "#ffffff"
+    }
+  },
+  "header": {
+    "id": "t89f4ox",
+    "memo": "header",
+    "style": {
+      "background-color": "#ba1806",
+      "color": "#ffffff"
+    },
+    "lines": [
+      {
+        "id": "rv2euml",
+        "lineType": "text",
+        "chunks": [
+          {
+            "id": "vmbh0gv",
+            "chunkType": "text",
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "id": "ijp3bhv",
+    "memo": "footer",
+    "style": {
+      "background-color": "#40a34d",
+      "color": "#ffffff"
+    },
+    "lines": [
+      {
+        "id": "d08rulr",
+        "lineType": "text",
+        "chunks": [
+          {
+            "id": "zh47ncr",
+            "chunkType": "text",
+            "text": ""
+          }
+        ]
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "wh5lbbs",
+      "memo": "",
+      "lines": [
+        {
+          "id": "mmankgl",
+          "lineType": "text",
+          "style": {
+            "padding-top": "2rem"
+          },
+          "chunks": [
+            {
+              "id": "vrof0ki",
+              "chunkType": "text",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "id": "kyq8gzq",
+          "lineType": "text",
+          "style": {
+            "padding-right": "8rem",
+            "padding-left": "2rem",
+            "background-color": "#303dcf",
+            "padding-top": "1rem",
+            "padding-bottom": "0.75rem"
+          },
+          "chunks": [
+            {
+              "id": "ssv2ini",
+              "chunkType": "text",
+              "text": "",
+              "variableKey": "alert",
+              "editorPlaceholderText": "The National Weather Service has issued A SEVERE THUNDERSTORM WARNING for the following counties/areas: Greenhill County...  Effective until 8:15 PM."
+            }
+          ],
+          "effects": [
+            {
+              "component": "Crawl",
+              "props": {
+                "speed": 80
+              }
+            }
+          ]
+        },
+        {
+          "id": "v76gh25",
+          "lineType": "freeform",
+          "chunks": [
+            {
+              "id": "5bcvk6a",
+              "chunkType": "image",
+              "text": "",
+              "freeform": {
+                "top": "34.28px",
+                "left": "511.42px",
+                "width": "84.99px",
+                "height": "56.66px",
+                "rotation": 0,
+                "objectFit": "fill"
+              },
+              "variableKey": "area"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

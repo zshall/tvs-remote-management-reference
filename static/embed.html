@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remote Management Embed Demo</title>
+    <link rel="stylesheet" href="shell-css/shell.css" />
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body class="theme-pastel desktop embed-page">
+    <div class="window active app-window">
+      <div class="title-bar">
+        <span class="control-box" aria-hidden="true"></span>
+        <span class="window-title">Remote Management Embed Demo</span>
+      </div>
+      <nav aria-label="Demo navigation">
+        <ul class="menu-bar">
+          <li class="menu-item"><a href="index.html">Control Panel</a></li>
+          <li class="menu-item active"><a href="embed.html">Embed Demo</a></li>
+          <li class="menu-item"><a href="https://docs.tvs.gcpw.art/developer/remote-management">Help</a></li>
+        </ul>
+      </nav>
+      <div class="app-content">
+        <header>
+          <h1 class="page-heading">Embed Transport Demo</h1>
+          <p class="lede">Configure the embedded TV with <code>parentOrigin: <span id="parentOrigin"></span></code>, then send any supported remote-management event from its immediate parent. No client ID or API key is needed.</p>
+        </header>
+
+        <section class="window panel-window" aria-labelledby="parent-controls-title">
+          <div class="title-bar"><h2 class="panel-title" id="parent-controls-title">Parent controls</h2></div>
+          <div class="panel-content embed-toolbar">
+            <label class="url-field">TVS URL <input id="tvsUrl" type="url" value="http://localhost:3990/" /></label>
+            <button class="btn btn-preferred" id="load">Load TVS</button>
+            <p id="embedStatus" class="hint" role="status">Messages are sent to the loaded TVS IFrame. TVS must allow this page's origin in its embed configuration.</p>
+          </div>
+        </section>
+
+        <div class="embed-workspace">
+          <section class="window panel-window embed-preview" aria-labelledby="preview-title">
+            <div class="title-bar"><h2 class="panel-title" id="preview-title">Embedded TVS preview</h2></div>
+            <div class="screen-frame">
+              <iframe id="tv" title="Embedded Television Simulator"></iframe>
+            </div>
+          </section>
+
+          <main class="control-grid embed-control-grid">
+          <section class="window panel-window" aria-labelledby="remote-input-title">
+            <div class="title-bar" id="remote-input-title">Remote input</div>
+            <fieldset class="panel-content remote-panel-content embed-command-controls" data-embed-command-controls disabled>
+              <div class="reference-remote" aria-label="TV remote control">
+                <div class="remote-top-controls">
+                  <div class="remote-control-button">Mute <button type="button" class="btn remote-button remote-button--dark" aria-label="Mute" data-command="muteOn"></button></div>
+                  <div class="remote-control-button">Power on <button type="button" class="btn remote-button remote-button--power-on" aria-label="Power on" data-command="turnOn"></button></div>
+                  <div class="remote-control-button">Unmute <button type="button" class="btn remote-button remote-button--light" aria-label="Unmute" data-command="muteOff"></button></div>
+                  <div class="remote-control-button">Power off <button type="button" class="btn remote-button remote-button--power-off" aria-label="Power off" data-command="turnOff"></button></div>
+                </div>
+                <div class="remote-keypad-slim" aria-label="Channel number keypad">
+                  <div class="remote-control-button">1 <button type="button" class="btn remote-button remote-button--light" aria-label="1" data-command="1"></button></div>
+                  <div class="remote-control-button">2 <button type="button" class="btn remote-button remote-button--light" aria-label="2" data-command="2"></button></div>
+                  <div class="remote-control-button">3 <button type="button" class="btn remote-button remote-button--light" aria-label="3" data-command="3"></button></div>
+                  <div class="remote-control-button">4 <button type="button" class="btn remote-button remote-button--light" aria-label="4" data-command="4"></button></div>
+                  <div class="remote-control-button">5 <button type="button" class="btn remote-button remote-button--light" aria-label="5" data-command="5"></button></div>
+                  <div class="remote-control-button">6 <button type="button" class="btn remote-button remote-button--light" aria-label="6" data-command="6"></button></div>
+                  <div class="remote-control-button">7 <button type="button" class="btn remote-button remote-button--light" aria-label="7" data-command="7"></button></div>
+                  <div class="remote-control-button">8 <button type="button" class="btn remote-button remote-button--light" aria-label="8" data-command="8"></button></div>
+                  <div class="remote-control-button">9 <button type="button" class="btn remote-button remote-button--light" aria-label="9" data-command="9"></button></div>
+                  <div class="remote-control-button">. <button type="button" class="btn remote-button remote-button--light" aria-label="Subchannel separator" data-command="subchannelSeparator"></button></div>
+                  <div class="remote-control-button remote-zero">0 <button type="button" class="btn remote-button remote-button--light" aria-label="0" data-command="0"></button></div>
+                </div>
+                <div class="remote-rockers">
+                  <div class="remote-rocker">
+                    <span>Volume</span>
+                    <button type="button" class="btn remote-button remote-button--light" aria-label="Volume up" data-repeat-remote-command="volumeUp">+</button>
+                    <button type="button" class="btn remote-button remote-button--light" aria-label="Volume down" data-repeat-remote-command="volumeDown">−</button>
+                  </div>
+                  <div class="remote-rocker">
+                    <span>Channel</span>
+                    <button type="button" class="btn remote-button remote-button--channel" aria-label="Channel up" data-repeat-remote-command="channelUp">+</button>
+                    <button type="button" class="btn remote-button remote-button--channel" aria-label="Channel down" data-repeat-remote-command="channelDown">−</button>
+                  </div>
+                </div>
+                <div class="remote-keypad-slim">
+                  <div class="remote-version-control">Version <button type="button" class="btn remote-button remote-button--dark" aria-label="Show version" data-command="version"></button></div>
+                  <div class="remote-version-control">Info <button type="button" class="btn remote-button remote-button--light" aria-label="Show info" data-command="info"></button></div>
+                </div>
+                <div class="remote-keypad-slim" aria-label="Picture controls">
+                  <div class="remote-control-button">Scanlines <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle scanlines" data-command="toggleScanlines"></button></div>
+                  <div class="remote-control-button">Noise <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle noise" data-command="toggleNoise"></button></div>
+                  <div class="remote-control-button">Blur <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle blur" data-command="toggleBlur"></button></div>
+                  <div class="remote-control-button">Shadow mask <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle shadow mask" data-command="toggleShadowMask"></button></div>
+                  <div class="remote-control-button">Shadow mask type <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle shadow mask type" data-command="toggleShadowMaskType"></button></div>
+                  <div class="remote-control-button">Bezels <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle bezels" data-command="toggleBezels"></button></div>
+                  <div class="remote-control-button">Bezel type <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle bezel type" data-command="toggleBezelType"></button></div>
+                  <div class="remote-control-button">Auto scale <button type="button" class="btn remote-button remote-button--picture-controls" aria-label="Toggle auto scale" data-command="toggleAutoScale"></button></div>
+                  <div class="remote-control-button">Reset picture <button type="button" class="btn remote-button remote-button--dark" aria-label="Reset picture" data-command="resetPicture"></button></div>
+                </div>
+                <div class="remote-scale-controls" aria-label="Picture scale controls">
+                  <span class="remote-scale-label">Scale X</span><span class="remote-scale-label">Scale Y</span>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--left" aria-label="Scale down horizontally" data-repeat-remote-command="scaleDownX"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--right" aria-label="Scale up horizontally" data-repeat-remote-command="scaleUpX"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--up" aria-label="Scale up vertically" data-repeat-remote-command="scaleUpY"></button>
+                  <button type="button" class="btn remote-button remote-button--picture-controls remote-scale-button remote-scale-button--down" aria-label="Scale down vertically" data-repeat-remote-command="scaleDownY"></button>
+                </div>
+              </div>
+            </fieldset>
+          </section>
+
+          <div class="control-details">
+            <section class="window panel-window" aria-labelledby="receiver-title">
+              <div class="title-bar" id="receiver-title">Channel and receiver</div>
+              <fieldset class="panel-content embed-command-controls" data-embed-command-controls disabled>
+                <label>Channel number <input id="channelNumber" value="2" /></label>
+                <label class="inline form-control"><input id="hideOsd" type="checkbox" /> <span class="option-text">Hide tuner OSD</span></label>
+                <button class="btn btn-preferred" id="setChannel">Set channel</button>
+                <label>Volume (0–50) <input id="volume" type="number" min="0" max="50" value="40" /></label>
+                <label class="inline form-control"><input id="isMuting" type="checkbox" /> <span class="option-text">Muted</span></label>
+                <button class="btn btn-preferred" id="setReceiverSettings">Set receiver settings</button>
+              </fieldset>
+            </section>
+
+            <section class="window panel-window" aria-labelledby="picture-title">
+              <div class="title-bar" id="picture-title">Picture settings</div>
+              <fieldset class="panel-content embed-command-controls" data-embed-command-controls disabled>
+                <label><span class="slider-heading"><span>Noise</span><output id="noiseValue" for="noise">0.25</output></span><input class="slider-input" id="noise" type="range" min="0" max="1" step="0.01" value="0.25" /></label>
+                <label><span class="slider-heading"><span>Blur in pixels</span><output id="blurValue" for="blur">1.0</output></span><input class="slider-input" id="blur" type="range" min="0" max="5" step="0.1" value="1" /></label>
+                <p class="hint">Noise and blur are sent live (max once every 10 ms).</p>
+                <label class="inline form-control"><input id="scanlines" type="checkbox" checked /> <span class="option-text">Scanlines</span></label>
+                <label class="inline form-control"><input id="changeChannelNoise" type="checkbox" checked /> <span class="option-text">Channel-change noise</span></label>
+                <button class="btn btn-preferred" id="setPicture">Set picture overrides</button>
+                <button class="btn" id="clearPicture">Clear these overrides</button>
+              </fieldset>
+            </section>
+
+            <section class="window panel-window" aria-labelledby="overlay-title">
+              <div class="title-bar" id="overlay-title">Overlay</div>
+              <fieldset class="panel-content embed-command-controls" data-embed-command-controls disabled>
+                <fieldset class="overlay-layout-options">
+                  <legend>Target</legend>
+                  <label class="inline form-control"><input type="radio" name="overlayTarget" value="all" checked /> <span class="option-text">All channels</span></label>
+                  <label class="inline form-control"><input type="radio" name="overlayTarget" value="individual" /> <span class="option-text">Individual channel</span></label>
+                </fieldset>
+                <div id="individualOverlayFields" class="overlay-layout-fields" hidden>
+                  <label>Channel number <input id="overlayChannel" value="2" /></label>
+                  <label>Slot (lowest 1 to highest 3) <span class="select-input"><select id="overlaySlot"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></span></label>
+                </div>
+                <p class="hint">Each channel has three fixed slots. The all-channels slot sits above them; a complete overlay replaces its slot.</p>
+                <label>Blend mode <span class="select-input"><select id="overlayBlendMode">
+                  <option value="normal">Normal</option><option value="multiply">Multiply</option><option value="screen">Screen</option><option value="overlay">Overlay</option><option value="darken">Darken</option><option value="lighten">Lighten</option><option value="color-dodge">Color dodge</option><option value="color-burn">Color burn</option><option value="hard-light">Hard light</option><option value="soft-light">Soft light</option><option value="difference">Difference</option><option value="exclusion">Exclusion</option><option value="hue">Hue</option><option value="saturation">Saturation</option><option value="color">Color</option><option value="luminosity">Luminosity</option><option value="plus-lighter">Plus lighter</option>
+                </select></span></label>
+                <fieldset class="overlay-layout-options">
+                  <legend>Layout</legend>
+                  <label class="inline form-control"><input type="radio" name="overlayLayoutSource" value="weather" checked /> <span class="option-text">Weather demo</span></label>
+                  <label class="inline form-control"><input type="radio" name="overlayLayoutSource" value="custom" /> <span class="option-text">Custom layout</span></label>
+                </fieldset>
+                <div id="weatherOverlayFields" class="overlay-layout-fields">
+                  <label>Alert text <textarea id="overlayAlert">The National Weather Service has issued A SEVERE THUNDERSTORM WARNING for Greenhill County.</textarea></label>
+                </div>
+                <div id="customOverlayFields" class="overlay-layout-fields" hidden>
+                  <label>Layout JSON file <input id="customOverlayLayoutFile" type="file" accept=".json,application/json" /></label>
+                  <p id="customOverlayLayoutStatus" class="hint" role="status">Choose a character-generator layout exported as JSON.</p>
+                  <div id="customOverlayVariableFields" class="custom-overlay-variable-fields"></div>
+                  <p id="customOverlaySystemVariables" class="hint" hidden></p>
+                </div>
+                <label>Expires in minutes <input id="overlayMinutes" type="number" min="1" value="10" /></label>
+                <label>Optional audio URL <input id="overlayAudio" placeholder="https://example.test/alert.mp3" /></label>
+                <label>Other-audio behavior <span class="select-input"><select id="overlayBehavior"><option value="mute">Mute</option><option value="duck">Duck</option></select></span></label>
+                <button class="btn btn-preferred" id="sendOverlayButton">Send full overlay</button>
+                <button class="btn" id="updateOverlayButton">Replace overlay data</button>
+                <button class="btn danger-action overlay-slot-action" id="clearSelectedSlotButton">Clear selected slot</button>
+                <button class="btn danger-action" id="clearSelectedChannelButton">Clear all-channels slot</button>
+                <button class="btn danger-action" id="clearEverySlotButton">Clear every slot</button>
+              </fieldset>
+            </section>
+
+            <section class="window panel-window" aria-labelledby="message-title">
+              <div class="title-bar" id="message-title">Last message to IFrame</div>
+              <div class="panel-content">
+                <pre id="result" aria-live="polite">No messages sent yet.</pre>
+              </div>
+            </section>
+
+            <section class="window panel-window" aria-labelledby="api-title">
+              <div class="title-bar" id="api-title">Parent IFrame API</div>
+              <fieldset class="panel-content embed-command-controls" data-embed-command-controls disabled>
+                <p id="apiStatus" class="hint" role="status">Waiting for TVS.EmbedReady…</p>
+                <button class="btn" id="getChannels">Get channels</button>
+                <button class="btn" id="getListings">Get 90-minute listings</button>
+                <button class="btn" id="getUpNext">Get next 3 programs</button>
+                <pre id="apiResult" aria-live="polite">No API response received yet.</pre>
+                <p class="hint">Replies include the request ID supplied by this page so concurrent requests can be matched.</p>
+              </fieldset>
+            </section>
+          </div>
+          </main>
+        </div>
+      </div>
+    </div>
+    <div style="height: 1rem;"></div>
+
+    <script src="embed.js" defer></script>
+  </body>
+</html>

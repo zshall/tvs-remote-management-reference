@@ -1,0 +1,19 @@
+applicationTitle: TVS Embed Remote Management Demo
+warmup: false
+scanlines: false
+shadowMask: false
+noise: 0.25
+blur: 1
+bezel: none
+
+remoteManagement:
+  type: embed
+  parentOrigin: http://localhost:3991
+
+channels:
+  - number: 1
+    name: DEMO CHANNEL 1
+    abbr: ONE
+  - number: 2
+    name: DEMO CHANNEL 2
+    abbr: TWO
